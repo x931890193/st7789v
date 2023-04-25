@@ -97,6 +97,6 @@ where
     }
 
     fn size(&self) -> Size {
-        Size::new(240, 240)
+        Size::new(172, 320)
     }
 }

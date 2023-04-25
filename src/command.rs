@@ -92,6 +92,27 @@ pub enum Command {
     RDCABCMB = 0x5F,
     /// Read Automatic brightness control self-diagnostic result
     RDABCSDR = 0x68,
+    /// Porch setting
+    PORCTRL = 0xB2,
+    /// Gate control
+    GCTRL = 0xB7,
+    /// VCOMS setting
+    VCOMS = 0xBB,
+    /// LCM control
+    LCMCTRL = 0xC0,
+    /// VCV and VRH command enable
+    VDVVRHEN = 0xC2,
+    /// VRH Set
+    VRHS = 0xC3,
+    /// VDVS Set
+    VDVS = 0xC4,
+    /// Frame Rate Control in Normal Mode
+    FRCTRL2 = 0xC6,
+    /// Power control 1
+    PWCTRL1 = 0xD0,
+    /// Unknown D6
+    UNKNOWN_D6 = 0xD6,
+
     /// Read ID1
     RDID1 = 0xDA,
     /// Read ID2

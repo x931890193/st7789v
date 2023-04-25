@@ -30,6 +30,8 @@ pub enum Error<PinError, SpiError> {
 #[allow(dead_code, non_camel_case_types)]
 #[repr(u8)]
 pub enum ColorFormat {
+    /// RGB interface 65K, 8-bit data but for 16 Bit/Pixel
+    RGB65K_CI8Bit = 0b0000_0101,
     /// RGB interface 65K, control interface 12 Bit/pixel
     RGB65K_CI12Bit = 0b0101_0011,
     /// RGB interface 65K, control interface 16 Bit/pixel
@@ -318,12 +320,14 @@ where
         self.hard_reset(delay)?
             .soft_reset(delay)?
             .sleep_out(delay)?
-            .color_mode(ColorFormat::RGB65K_CI16Bit, delay)?
             .memory_access_control(MemAccCtrlConfig::default())?
-            .column_address(0, 240)?
-            .row_address(0, 240)?
+            .color_mode(ColorFormat::RGB65K_CI8Bit, delay)?
+            .porch_setting()?
+            .gate_control()?
+            .vcoms_setting()?
+            .lcm_control()?
             .inversion_on()?
-            .normal_mode()?
+            .sleep_out(delay)?
             .display_on()?;
 
         Ok(())
@@ -340,6 +344,53 @@ where
     {
         self.command(Command::COLMOD, Some(&[color_format.value()]))?;
         delay.delay_ms(10);
+
+        Ok(self)
+    }
+
+    /// This sets the porch setting.
+    pub fn porch_setting<'a>(
+        &'a mut self,
+    ) -> Result<&'a mut Self, Error<PinError, SpiError>>
+    {
+        self.command(Command::PORCTRL, Some(&[0x0C, 0x0C, 0x00, 0x33, 0x33]))?;
+
+        Ok(self)
+    }
+
+    /// This sets the gate control.
+    pub fn gate_control<'a>(
+        &'a mut self,
+    ) -> Result<&'a mut Self, Error<PinError, SpiError>>
+    {
+        self.command(Command::GCTRL, Some(&[0x35]))?;
+
+        Ok(self)
+    }
+
+    /// This sets the VCOMS setting.
+    pub fn vcoms_setting<'a>(
+        &'a mut self,
+    ) -> Result<&'a mut Self, Error<PinError, SpiError>>
+    {
+        self.command(Command::VCOMS, Some(&[0x35]))?;
+
+        Ok(self)
+    }
+
+    /// This sets the LCM control.
+    pub fn lcm_control<'a>(
+        &'a mut self,
+    ) -> Result<&'a mut Self, Error<PinError, SpiError>>
+    {
+        self.command(Command::LCMCTRL, Some(&[0x2C]))?;
+
+        self.command(Command::VDVVRHEN, Some(&[0x01]))?;
+        self.command(Command::VRHS, Some(&[0x13]))?;
+        self.command(Command::VDVS, Some(&[0x20]))?;
+        self.command(Command::FRCTRL2, Some(&[0x0F]))?;
+        self.command(Command::PWCTRL1, Some(&[0xA4, 0xA1]))?;
+        self.command(Command::UNKNOWN_D6, Some(&[0xA1]))?;
 
         Ok(self)
     }
@@ -372,7 +423,7 @@ where
         DELAY: DelayMs<u16>,
     {
         self.command(Command::SLPOUT, None)?;
-        delay.delay_ms(500);
+        delay.delay_ms(120);
 
         Ok(self)
     }
@@ -428,9 +479,9 @@ where
     /// Define read/write scanning direction of the frame memory.
     pub fn memory_access_control<'a>(
         &'a mut self,
-        config: MemAccCtrlConfig,
+        _config: MemAccCtrlConfig,
     ) -> Result<&'a mut Self, Error<PinError, SpiError>> {
-        self.command(Command::MADCTL, Some(&[config.value()]))?;
+        self.command(Command::MADCTL, Some(&[0x00]))?;
 
         Ok(self)
     }
@@ -466,10 +517,14 @@ where
         self.command(
             Command::CASET,
             Some(&[
-                (xs >> 8) as u8,
-                (xs & 0xFF) as u8,
-                (xe >> 8) as u8,
-                (xe & 0xFF) as u8,
+                (0x00) as u8,
+                (xs + 0x22) as u8,
+                (((xe + 0x22) - 1) >> 8) as u8,
+                ((xe + 0x22) - 1) as u8,
+                // (xs >> 8) as u8,
+                // (xs & 0xFF) as u8,
+                // (xe >> 8) as u8,
+                // (xe & 0xFF) as u8,
             ]),
         )?;
 
@@ -493,10 +548,14 @@ where
         self.command(
             Command::RASET,
             Some(&[
-                (rs >> 8) as u8,
-                (rs & 0xFF) as u8,
-                (re >> 8) as u8,
-                (re & 0xFF) as u8,
+                (0x00) as u8,
+                (rs) as u8,
+                ((re - 1) >> 8) as u8,
+                (re - 1) as u8,
+                // (rs >> 8) as u8,
+                // (rs & 0xFF) as u8,
+                // (re >> 8) as u8,
+                // (re & 0xFF) as u8,
             ]),
         )?;
 
