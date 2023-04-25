@@ -1,5 +1,5 @@
 #![deny(unsafe_code, warnings)]
-#![no_std]
+// #![no_std]
 
 use core::marker::PhantomData;
 
@@ -641,8 +641,16 @@ where
         self.address_window(xs, ys, xe, ye)?;
         self.mem_write(&[])?;
 
-        for color in colors {
-            self.data(&color.to_be_bytes())?;
+        self.cfg.dc.set_high().map_err(Error::Pin)?;
+
+        let colors_vec: Vec<u8> = colors
+        .map(|x| x.to_be_bytes())
+        .flatten()
+        .collect();
+
+        let pixel_slice = colors_vec.as_slice();
+        for chunk in pixel_slice.chunks(4096) {
+            self.data(&chunk)?;
         }
 
         Ok(self)
@@ -657,6 +665,7 @@ where
         self.spi.write(&[cmd.value()]).map_err(Error::Spi)?;
 
         if let Some(params) = params {
+            self.cfg.dc.set_high().map_err(Error::Pin)?;
             self.data(params)?;
         }
 
@@ -664,7 +673,6 @@ where
     }
 
     fn data<'a>(&'a mut self, data: &[u8]) -> Result<&'a mut Self, Error<PinError, SpiError>> {
-        self.cfg.dc.set_high().map_err(Error::Pin)?;
         self.spi.write(data).map_err(Error::Spi)?;
         Ok(self)
     }
