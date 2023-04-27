@@ -12,6 +12,7 @@ license = "MIT OR Apache-2.0"
 
 [dependencies]
 embedded-hal = "0.2.3"
+# for example
 spidev = "0.5.1"
 sysfs_gpio = "0.6.1"
 
@@ -26,5 +27,5 @@ graphics = ["embedded-graphics"]
 
 [[example]]
 name = "versionfive2"
-path = "src/examples/versionfive2.rs"
+path = "examples/versionfive2.rs"
 description = "A simple example that shows how to use waveshare-lcd use versionFive2"

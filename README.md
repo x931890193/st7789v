@@ -22,6 +22,9 @@ This driver is a fork of [Gussy/st7789v] that has been modified to work on linux
 
 [Gussy/st7789v]: https://github.com/Gussy/st7789v
 
+## Run example
+> cargo run --example versionfive2
+
 ## License
 
 - MIT license ([LICENSE-MIT](LICENSE-MIT) or http://opensource.org/licenses/MIT)
