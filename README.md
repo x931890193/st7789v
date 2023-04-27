@@ -1,6 +1,8 @@
 # st7789v
 
 > A (mostly) platform agnostic driver to interface with the ST7789V LCD controller.
+>  
+> Special for VersionFive2 2inch LCD Module
 
 - [Datasheet]
 

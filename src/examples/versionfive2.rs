@@ -1,11 +1,9 @@
 use std::io::Write;
 use std::{thread, time};
-use embedded_graphics::drawable::Drawable;
 use embedded_graphics::DrawTarget;
 use embedded_graphics::geometry::Point;
-use embedded_graphics::image::{Image, ImageRaw, ImageRawLE};
-use embedded_graphics::pixelcolor::{BinaryColor, Rgb565, RgbColor};
-use embedded_graphics::prelude::Primitive;
+use embedded_graphics::image::{Image, ImageRawLE};
+use embedded_graphics::pixelcolor::{Rgb565, RgbColor};
 use st7789v::{ST7789V};
 use embedded_hal::digital::v2::OutputPin;
 use spidev::{Spidev, SpidevOptions, SpiModeFlags};
@@ -134,5 +132,10 @@ fn main() {
     let image= &Image::new(&image, Point::zero());
 
     // image.draw(&mut display);
-    display.draw_image(image).expect("draw_image error");
+    display.draw_image(image).expect("[draw_image] error");
+
+    // release
+    display.release().expect("[release display] error");
+    // backlight
+    gpio.pin_bl.0.unexport().expect("");
 }
