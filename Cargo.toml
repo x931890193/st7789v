@@ -2,17 +2,18 @@
 name = "st7789v"
 categories = ["ebmedded", "hardware-support", "no-std"]
 version = "0.1.0"
-authors = ["Sebastian Woetzel <wose@zuendmasse.de>"]
 edition = "2018"
 
 description = "A platform agnostic driver to interface with the ST7789V LCD display"
 keywords = ["embedded-hal", "display"]
-repostitory = "https://github.com/wose/st7789v"
+repostitory = "https://github.com/x931890193/st7789v"
 readme = "README.md"
 license = "MIT OR Apache-2.0"
 
 [dependencies]
 embedded-hal = "0.2.3"
+spidev = "0.5.1"
+sysfs_gpio = "0.6.1"
 
 [dependencies.embedded-graphics]
 optional = true
@@ -21,3 +22,9 @@ version = "0.6.0-beta.2"
 [features]
 default = ["graphics"]
 graphics = ["embedded-graphics"]
+
+
+[[example]]
+name = "versionfive2"
+path = "src/examples/versionfive2.rs"
+description = "A simple example that shows how to use waveshare-lcd use versionFive2"

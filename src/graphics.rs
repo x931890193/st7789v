@@ -55,6 +55,11 @@ where
         Ok(())
     }
 
+    fn size(&self) -> Size {
+        // Vertical direction
+        Size::new(240, 320)
+    }
+
     fn draw_rectangle(
         &mut self,
         item: &Styled<Rectangle, PrimitiveStyle<Rgb565>>,
@@ -94,9 +99,5 @@ where
         self.pixels(sx, sy, ex, ey, &mut colors)?;
 
         Ok(())
-    }
-
-    fn size(&self) -> Size {
-        Size::new(172, 320)
     }
 }

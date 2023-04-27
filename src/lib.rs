@@ -151,32 +151,32 @@ impl MemAccCtrlConfig {
         }
     }
 
-    pub fn color_order<'a>(&'a mut self, color_order: ColorOrder) -> &'a mut Self {
+    pub fn color_order(&mut self, color_order: ColorOrder) -> &mut Self {
         self.color_order = color_order;
         self
     }
 
-    pub fn latch_order<'a>(&'a mut self, latch_order: LatchOrder) -> &'a mut Self {
+    pub fn latch_order(&mut self, latch_order: LatchOrder) -> &mut Self {
         self.latch_order = latch_order;
         self
     }
 
-    pub fn line_order<'a>(&'a mut self, line_order: LineAddressOrder) -> &'a mut Self {
+    pub fn line_order(&mut self, line_order: LineAddressOrder) -> &mut Self {
         self.line_order = line_order;
         self
     }
 
-    pub fn page_order<'a>(&'a mut self, page_order: PageAddressOrder) -> &'a mut Self {
+    pub fn page_order(&mut self, page_order: PageAddressOrder) -> &mut Self {
         self.page_order = page_order;
         self
     }
 
-    pub fn page_column_order<'a>(&'a mut self, page_column_order: PageColumnOrder) -> &'a mut Self {
+    pub fn page_column_order(&mut self, page_column_order: PageColumnOrder) -> &mut Self {
         self.page_column_order = page_column_order;
         self
     }
 
-    pub fn column_order<'a>(&'a mut self, column_order: ColumnAddressOrder) -> &'a mut Self {
+    pub fn column_order(&mut self, column_order: ColumnAddressOrder) -> &mut Self {
         self.column_order = column_order;
         self
     }
@@ -193,10 +193,10 @@ impl MemAccCtrlConfig {
 
 /// ST7789V display driver config
 pub struct ST7789VConfig<CS, DC, RST>
-where
-    CS: OutputPin,
-    DC: OutputPin,
-    RST: OutputPin,
+    where
+        CS: OutputPin,
+        DC: OutputPin,
+        RST: OutputPin,
 {
     /// Chip Select pin
     cs: Option<CS>,
@@ -207,10 +207,10 @@ where
 }
 
 impl<CS, DC, RST> ST7789VConfig<CS, DC, RST>
-where
-    CS: OutputPin,
-    DC: OutputPin,
-    RST: OutputPin,
+    where
+        CS: OutputPin,
+        DC: OutputPin,
+        RST: OutputPin,
 {
     /// Create a new display config
     pub fn new(dc: DC, rst: RST) -> Self {
@@ -234,11 +234,11 @@ where
 
 /// ST7789V display driver
 pub struct ST7789V<SPI, CS, DC, RST, PinError, SpiError>
-where
-    SPI: spi::Write<u8>,
-    CS: OutputPin,
-    DC: OutputPin,
-    RST: OutputPin,
+    where
+        SPI: spi::Write<u8>,
+        CS: OutputPin,
+        DC: OutputPin,
+        RST: OutputPin,
 {
     /// SPI
     spi: SPI,
@@ -250,11 +250,11 @@ where
 }
 
 impl<SPI, CS, DC, RST, PinError, SpiError> ST7789V<SPI, CS, DC, RST, PinError, SpiError>
-where
-    SPI: spi::Write<u8, Error = SpiError>,
-    CS: OutputPin<Error = PinError>,
-    DC: OutputPin<Error = PinError>,
-    RST: OutputPin<Error = PinError>,
+    where
+        SPI: spi::Write<u8, Error=SpiError>,
+        CS: OutputPin<Error=PinError>,
+        DC: OutputPin<Error=PinError>,
+        RST: OutputPin<Error=PinError>,
 {
     /// Creates a new display instance
     pub fn new(spi: SPI, dc: DC, rst: RST) -> Self {
@@ -314,33 +314,78 @@ where
 
     /// Initialize the display
     pub fn init<DELAY>(&mut self, delay: &mut DELAY) -> Result<(), Error<PinError, SpiError>>
-    where
-        DELAY: DelayMs<u16>,
+        where
+            DELAY: DelayMs<u16>,
     {
         self.hard_reset(delay)?
-            .soft_reset(delay)?
-            .sleep_out(delay)?
-            .memory_access_control(MemAccCtrlConfig::default())?
-            .color_mode(ColorFormat::RGB65K_CI8Bit, delay)?
-            .porch_setting()?
-            .gate_control()?
-            .vcoms_setting()?
-            .lcm_control()?
-            .inversion_on()?
-            .sleep_out(delay)?
-            .display_on()?;
-
+            .command(Command::MADCTL, Some(&[0x00]))?
+            .command(Command::COLMOD, Some(&[0x05]))?
+            .command(Command::INVON, None)?
+            .command(Command::CASET, None)?
+            .data(&[0x00])?
+            .data(&[0x00])?
+            .data(&[0x01])?
+            .data(&[0x3f])?
+            .command(Command::RASET, None)?
+            .data(&[0x00])?
+            .data(&[0x00])?
+            .data(&[0x00])?
+            .data(&[0x33])?
+            .data(&[0x33])?
+            .command(Command::GCTRL, Some(&[0x35]))?
+            .command(Command::VCOMS, Some(&[0x1f]))?
+            .command(Command::LCMCTRL,Some(&[0x2c]))?
+            .command(Command::VDVVRHEN,Some(&[0x01]))?
+            .command(Command::VRHS,Some(&[0x12]))?
+            .command(Command::VDVS,Some(&[0x20]))?
+            .command(Command::FRCTRL2,Some(&[0x0f]))?
+            .command(Command::PWCTRL1,None)?
+            .data(&[0xa4])?
+            .data(&[0xa1])?
+            .command(Command::E0,None)?
+            .data(&[0xD0])?
+            .data(&[0x08])?
+            .data(&[0x11])?
+            .data(&[0x08])?
+            .data(&[0x0c])?
+            .data(&[0x15])?
+            .data(&[0x39])?
+            .data(&[0x33])?
+            .data(&[0x50])?
+            .data(&[0x36])?
+            .data(&[0x13])?
+            .data(&[0x14])?
+            .data(&[0x29])?
+            .data(&[0x2d])?
+            .command(Command::E1, None)?
+            .data(&[0xd0])?
+            .data(&[0x08])?
+            .data(&[0x10])?
+            .data(&[0x08])?
+            .data(&[0x06])?
+            .data(&[0x06])?
+            .data(&[0x39])?
+            .data(&[0x44])?
+            .data(&[0x51])?
+            .data(&[0x0b])?
+            .data(&[0x16])?
+            .data(&[0x14])?
+            .data(&[0x2f])?
+            .data(&[0x31])?
+            .command(Command::INVON, None)?
+            .command(Command::SLPOUT, None)?
+            .command(Command::DISPON, None)?;
         Ok(())
     }
 
     /// This sets the RGB interface and control interface color format.
-    pub fn color_mode<'a, DELAY>(
-        &'a mut self,
+    pub fn color_mode<DELAY>(
+        &mut self,
         color_format: ColorFormat,
         delay: &mut DELAY,
-    ) -> Result<&'a mut Self, Error<PinError, SpiError>>
-    where
-        DELAY: DelayMs<u16>,
+    ) -> Result<&mut Self, Error<PinError, SpiError>>
+        where
+            DELAY: DelayMs<u16>,
     {
         self.command(Command::COLMOD, Some(&[color_format.value()]))?;
         delay.delay_ms(10);
@@ -349,40 +394,28 @@ where
     }
 
     /// This sets the porch setting.
-    pub fn porch_setting<'a>(
-        &'a mut self,
-    ) -> Result<&'a mut Self, Error<PinError, SpiError>>
-    {
+    pub fn porch_setting(&mut self) -> Result<&mut Self, Error<PinError, SpiError>> {
         self.command(Command::PORCTRL, Some(&[0x0C, 0x0C, 0x00, 0x33, 0x33]))?;
 
         Ok(self)
     }
 
     /// This sets the gate control.
-    pub fn gate_control<'a>(
-        &'a mut self,
-    ) -> Result<&'a mut Self, Error<PinError, SpiError>>
-    {
+    pub fn gate_control(&mut self) -> Result<&mut Self, Error<PinError, SpiError>> {
         self.command(Command::GCTRL, Some(&[0x35]))?;
 
         Ok(self)
     }
 
     /// This sets the VCOMS setting.
-    pub fn vcoms_setting<'a>(
-        &'a mut self,
-    ) -> Result<&'a mut Self, Error<PinError, SpiError>>
-    {
+    pub fn vcoms_setting(&mut self) -> Result<&mut Self, Error<PinError, SpiError>> {
         self.command(Command::VCOMS, Some(&[0x35]))?;
 
         Ok(self)
     }
 
     /// This sets the LCM control.
-    pub fn lcm_control<'a>(
-        &'a mut self,
-    ) -> Result<&'a mut Self, Error<PinError, SpiError>>
-    {
+    pub fn lcm_control(&mut self) -> Result<&mut Self, Error<PinError, SpiError>> {
         self.command(Command::LCMCTRL, Some(&[0x2C]))?;
 
         self.command(Command::VDVVRHEN, Some(&[0x01]))?;
@@ -400,12 +433,12 @@ where
     /// In this mode the DC/DC converter is stopped, the internal oscillator and the panel
     /// scanning is stopped. The MCU interface and memory are still working and the memory
     /// keeps its contents.
-    pub fn sleep_in<'a, DELAY>(
-        &'a mut self,
+    pub fn sleep_in<DELAY>(
+        &mut self,
         delay: &mut DELAY,
-    ) -> Result<&'a mut Self, Error<PinError, SpiError>>
-    where
-        DELAY: DelayMs<u16>,
+    ) -> Result<&mut Self, Error<PinError, SpiError>>
+        where
+            DELAY: DelayMs<u16>,
     {
         self.command(Command::SLPIN, None)?;
         delay.delay_ms(5);
@@ -415,12 +448,12 @@ where
 
     /// In this mode the DC/DC converter is enabled, internal display oscillator and the panel
     /// scanning is started.
-    pub fn sleep_out<'a, DELAY>(
-        &'a mut self,
+    pub fn sleep_out<DELAY>(
+        &mut self,
         delay: &mut DELAY,
-    ) -> Result<&'a mut Self, Error<PinError, SpiError>>
-    where
-        DELAY: DelayMs<u16>,
+    ) -> Result<&mut Self, Error<PinError, SpiError>>
+        where
+            DELAY: DelayMs<u16>,
     {
         self.command(Command::SLPOUT, None)?;
         delay.delay_ms(120);
@@ -429,30 +462,30 @@ where
     }
 
     /// Leave normal mode and enter partial mode.
-    pub fn partial_display_mode<'a>(
-        &'a mut self,
-    ) -> Result<&'a mut Self, Error<PinError, SpiError>> {
+    pub fn partial_display_mode(
+        &mut self,
+    ) -> Result<&mut Self, Error<PinError, SpiError>> {
         self.command(Command::PTLON, None)?;
 
         Ok(self)
     }
 
     /// Leave partial mode and enter normal mode.
-    pub fn normal_mode<'a>(&'a mut self) -> Result<&'a mut Self, Error<PinError, SpiError>> {
+    pub fn normal_mode(&mut self) -> Result<&mut Self, Error<PinError, SpiError>> {
         self.command(Command::NORON, None)?;
 
         Ok(self)
     }
 
     /// Display Inversion Off
-    pub fn inversion_off<'a>(&'a mut self) -> Result<&'a mut Self, Error<PinError, SpiError>> {
+    pub fn inversion_off(&mut self) -> Result<&mut Self, Error<PinError, SpiError>> {
         self.command(Command::INVOFF, None)?;
 
         Ok(self)
     }
 
     /// Display Inversion On
-    pub fn inversion_on<'a>(&'a mut self) -> Result<&'a mut Self, Error<PinError, SpiError>> {
+    pub fn inversion_on(&mut self) -> Result<&mut Self, Error<PinError, SpiError>> {
         self.command(Command::INVON, None)?;
 
         Ok(self)
@@ -462,7 +495,7 @@ where
     /// disabled and a blank page is inserted. This command does not change to the frame
     /// memory contents nor any other status. There will be no abnormal visible effect on the
     /// display.
-    pub fn display_off<'a>(&'a mut self) -> Result<&'a mut Self, Error<PinError, SpiError>> {
+    pub fn display_off(&mut self) -> Result<&mut Self, Error<PinError, SpiError>> {
         self.command(Command::DISPOFF, None)?;
 
         Ok(self)
@@ -470,31 +503,31 @@ where
 
     /// The LCD enters DISPLAY ON mode. The output from the frame memory is enabled. This
     /// command does not change the frame memory content nor any other status.
-    pub fn display_on<'a>(&'a mut self) -> Result<&'a mut Self, Error<PinError, SpiError>> {
+    pub fn display_on(&mut self) -> Result<&mut Self, Error<PinError, SpiError>> {
         self.command(Command::DISPON, None)?;
 
         Ok(self)
     }
 
     /// Define read/write scanning direction of the frame memory.
-    pub fn memory_access_control<'a>(
-        &'a mut self,
+    pub fn memory_access_control(
+        &mut self,
         _config: MemAccCtrlConfig,
-    ) -> Result<&'a mut Self, Error<PinError, SpiError>> {
+    ) -> Result<&mut Self, Error<PinError, SpiError>> {
         self.command(Command::MADCTL, Some(&[0x00]))?;
 
         Ok(self)
     }
 
     /// Idle mode off.
-    pub fn idle_off<'a>(&'a mut self) -> Result<&'a mut Self, Error<PinError, SpiError>> {
+    pub fn idle_off(&mut self) -> Result<&mut Self, Error<PinError, SpiError>> {
         self.command(Command::IDMOFF, None)?;
 
         Ok(self)
     }
 
     /// Idle mode on.
-    pub fn idle_on<'a>(&'a mut self) -> Result<&'a mut Self, Error<PinError, SpiError>> {
+    pub fn idle_on(&mut self) -> Result<&mut Self, Error<PinError, SpiError>> {
         self.command(Command::IDMON, None)?;
 
         Ok(self)
@@ -505,11 +538,11 @@ where
     ///
     /// `xs` must always be equal or less than `xe`. When `xs` or `xe` are greater than
     /// the maximum address, all data outside the range will be ignored.
-    pub fn column_address<'a>(
-        &'a mut self,
+    pub fn column_address(
+        &mut self,
         xs: u16,
         xe: u16,
-    ) -> Result<&'a mut Self, Error<PinError, SpiError>> {
+    ) -> Result<&mut Self, Error<PinError, SpiError>> {
         if xs > xe {
             return Err(Error::InvalidColumnAddress);
         }
@@ -518,13 +551,9 @@ where
             Command::CASET,
             Some(&[
                 (0x00) as u8,
-                (xs + 0x22) as u8,
+                (xs & 0xFF) as u8,
                 (((xe + 0x22) - 1) >> 8) as u8,
-                ((xe + 0x22) - 1) as u8,
-                // (xs >> 8) as u8,
-                // (xs & 0xFF) as u8,
-                // (xe >> 8) as u8,
-                // (xe & 0xFF) as u8,
+                (((xe + 0x22) - 1) & 0xFF) as u8,
             ]),
         )?;
 
@@ -534,13 +563,13 @@ where
     /// Sets the row address window.
     /// Each value represents one page line in the frame memory.
     ///
-    /// `rs` must always be equal or greater than `re`. Data outside the addressable
+    /// `rs` must always be equal or less than `re`. Data outside the addressable
     /// space will be ignored.
-    pub fn row_address<'a>(
-        &'a mut self,
+    pub fn row_address(
+        &mut self,
         rs: u16,
         re: u16,
-    ) -> Result<&'a mut Self, Error<PinError, SpiError>> {
+    ) -> Result<&mut Self, Error<PinError, SpiError>> {
         if rs > re {
             return Err(Error::InvalidRowAddress);
         }
@@ -549,13 +578,9 @@ where
             Command::RASET,
             Some(&[
                 (0x00) as u8,
-                (rs) as u8,
+                (rs & 0xFF) as u8,
                 ((re - 1) >> 8) as u8,
-                (re - 1) as u8,
-                // (rs >> 8) as u8,
-                // (rs & 0xFF) as u8,
-                // (re >> 8) as u8,
-                // (re & 0xFF) as u8,
+                ((re - 1) & 0xFF) as u8,
             ]),
         )?;
 
@@ -563,27 +588,30 @@ where
     }
 
     /// Sets the address window.
-    pub fn address_window<'a>(
-        &'a mut self,
+    pub fn address_window(
+        &mut self,
         xs: u16,
         rs: u16,
         xe: u16,
         re: u16,
-    ) -> Result<&'a mut Self, Error<PinError, SpiError>> {
+    ) -> Result<&mut Self, Error<PinError, SpiError>> {
         self.column_address(xs, xe)?.row_address(rs, re)?;
 
         Ok(self)
     }
 
     /// Performs a hard reset. The display has to be initialized afterwards.
-    pub fn hard_reset<'a, DELAY>(
-        &'a mut self,
+    pub fn hard_reset<DELAY>(
+        &mut self,
         delay: &mut DELAY,
-    ) -> Result<&'a mut Self, Error<PinError, SpiError>>
-    where
-        DELAY: DelayMs<u16>,
+    ) -> Result<&mut Self, Error<PinError, SpiError>>
+        where
+            DELAY: DelayMs<u16>,
     {
-        self.cfg.rst.set_high().map_err(Error::Pin)?;
+        if let Some(cs) = self.cfg.cs.as_mut() {
+            cs.set_high().map_err(Error::Pin)?;
+        }
+
         delay.delay_ms(1);
         self.cfg.rst.set_low().map_err(Error::Pin)?;
         delay.delay_ms(1);
@@ -597,12 +625,12 @@ where
     ///
     /// Registers are written with their SW reset default values. Frame memory contens are
     /// unaffected by this command.
-    pub fn soft_reset<'a, DELAY>(
-        &'a mut self,
+    pub fn soft_reset<DELAY>(
+        &mut self,
         delay: &mut DELAY,
-    ) -> Result<&'a mut Self, Error<PinError, SpiError>>
-    where
-        DELAY: DelayMs<u16>,
+    ) -> Result<&mut Self, Error<PinError, SpiError>>
+        where
+            DELAY: DelayMs<u16>,
     {
         self.command(Command::SWRESET, None)?;
         delay.delay_ms(150);
@@ -618,12 +646,12 @@ where
     }
 
     /// Sets a single pixel to the given color
-    pub fn pixel<'a>(
-        &'a mut self,
+    pub fn pixel(
+        &mut self,
         x: u16,
         y: u16,
         color: u16,
-    ) -> Result<&'a Self, Error<PinError, SpiError>> {
+    ) -> Result<&Self, Error<PinError, SpiError>> {
         self.address_window(x, y, x, y)?;
         self.mem_write(&color.to_be_bytes())?;
 
@@ -636,43 +664,53 @@ where
         ys: u16,
         xe: u16,
         ye: u16,
-        colors: &mut dyn Iterator<Item = u16>,
+        colors: &mut dyn Iterator<Item=u16>,
     ) -> Result<&'a mut Self, Error<PinError, SpiError>> {
         self.address_window(xs, ys, xe, ye)?;
         self.mem_write(&[])?;
-
+        if let Some(cs) = self.cfg.cs.as_mut() {
+            cs.set_low().map_err(Error::Pin)?;
+        }
         self.cfg.dc.set_high().map_err(Error::Pin)?;
 
-        let colors_vec: Vec<u8> = colors
-        .map(|x| x.to_be_bytes())
-        .flatten()
-        .collect();
+        let colors_vec: Vec<u8> = colors.map(|x| x.to_be_bytes()).flatten().collect();
 
         let pixel_slice = colors_vec.as_slice();
         for chunk in pixel_slice.chunks(4096) {
             self.data(&chunk)?;
         }
-
+        if let Some(cs) = self.cfg.cs.as_mut() {
+            cs.set_high().map_err(Error::Pin)?;
+        }
         Ok(self)
     }
 
-    fn command<'a>(
-        &'a mut self,
+    fn command(
+        &mut self,
         cmd: Command,
         params: Option<&[u8]>,
-    ) -> Result<&'a mut Self, Error<PinError, SpiError>> {
+    ) -> Result<&mut Self, Error<PinError, SpiError>> {
+        if let Some(cs) = self.cfg.cs.as_mut() {
+            cs.set_low().map_err(Error::Pin)?;
+        }
         self.cfg.dc.set_low().map_err(Error::Pin)?;
         self.spi.write(&[cmd.value()]).map_err(Error::Spi)?;
 
         if let Some(params) = params {
+            if let Some(cs) = self.cfg.cs.as_mut() {
+                cs.set_low().map_err(Error::Pin)?;
+            }
             self.cfg.dc.set_high().map_err(Error::Pin)?;
             self.data(params)?;
+            if let Some(cs) = self.cfg.cs.as_mut() {
+                cs.set_high().map_err(Error::Pin)?;
+            }
         }
 
         Ok(self)
     }
 
-    fn data<'a>(&'a mut self, data: &[u8]) -> Result<&'a mut Self, Error<PinError, SpiError>> {
+    fn data(&mut self, data: &[u8]) -> Result<&mut Self, Error<PinError, SpiError>> {
         self.spi.write(data).map_err(Error::Spi)?;
         Ok(self)
     }

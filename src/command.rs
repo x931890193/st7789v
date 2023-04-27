@@ -119,6 +119,9 @@ pub enum Command {
     RDID2 = 0xDB,
     /// Read ID3
     RDID3 = 0xDC,
+
+    E0 = 0xE0,
+    E1 = 0xE1
 }
 
 impl Command {
