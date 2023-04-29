@@ -20,7 +20,7 @@ https://forum.rvspace.org/t/source-code-for-sense-hat-b-and-lcd-with-visionfive-
 
 ## Similar/Alternative drivers
 
-This driver is a fork of [Gussy/st7789v] that has been modified to work on linux with small <2" Waveshare LCD displays.
+This driver is a fork of [Gussy/st7789v] that has been modified to work on VersionFive2 with Waveshare LCD displays.
 
 [Gussy/st7789v]: https://github.com/Gussy/st7789v
 
