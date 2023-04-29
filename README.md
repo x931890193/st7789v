@@ -1,5 +1,7 @@
 # st7789v
 
+<img width="241" alt="image" src="https://user-images.githubusercontent.com/24632574/235287210-a501c975-eb82-421a-9980-f783385795ec.png">  
+
 > A (mostly) platform agnostic driver to interface with the ST7789V LCD controller.
 >  
 > Special for VersionFive2 2inch LCD Module
@@ -18,7 +20,7 @@ https://forum.rvspace.org/t/source-code-for-sense-hat-b-and-lcd-with-visionfive-
 
 ## Similar/Alternative drivers
 
-This driver is a fork of [Gussy/st7789v] that has been modified to work on linux with small <2" Waveshare LCD displays.
+This driver is a fork of [Gussy/st7789v] that has been modified to work on VersionFive2 with Waveshare LCD displays.
 
 [Gussy/st7789v]: https://github.com/Gussy/st7789v
 
