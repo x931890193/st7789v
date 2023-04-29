@@ -1,7 +1,6 @@
 # st7789v
 
-![image](https://user-images.githubusercontent.com/24632574/235287187-6c9cecf0-0050-44b2-9f48-47e3c7a65187.png)
-  
+<img width="241" alt="image" src="https://user-images.githubusercontent.com/24632574/235287210-a501c975-eb82-421a-9980-f783385795ec.png">  
 
 > A (mostly) platform agnostic driver to interface with the ST7789V LCD controller.
 >  
