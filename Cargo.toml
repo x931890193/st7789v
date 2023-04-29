@@ -4,8 +4,8 @@ categories = ["ebmedded", "hardware-support", "no-std"]
 version = "0.1.0"
 edition = "2018"
 
-description = "A platform agnostic driver to interface with the ST7789V LCD display"
-keywords = ["embedded-hal", "display"]
+description = "A platform agnostic driver to interface with the ST7789V (waveshare 2inch LCD Module), works on VersionFive2"
+keywords = ["embedded-hal", "display", "VersionFive2"]
 repostitory = "https://github.com/x931890193/st7789v"
 readme = "README.md"
 license = "MIT OR Apache-2.0"
@@ -16,9 +16,6 @@ embedded-hal = "0.2.3"
 spidev = "0.5.1"
 sysfs_gpio = "0.6.1"
 tinybmp = "0.4.0"
-
-[dependencies.display-interface]
-version = "0.4"
 
 [dependencies.embedded-graphics]
 optional = true
