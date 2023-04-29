@@ -153,7 +153,6 @@ fn main() {
     let image = ImageRawLE::new(include_bytes!("./assets/ferris.raw"), 86, 64);
     let image= &Image::new(&image, Point::new(50, 50));
 
-    image.draw(&mut display).expect("draw error!");
     display.draw_image(&image).expect("[draw_image] error");
 
     let line =  Line::new(Point::new(0, 0), Point::new(width as i32, height as i32 )).into_styled(PrimitiveStyle::with_stroke(Rgb565::GREEN, 10));
