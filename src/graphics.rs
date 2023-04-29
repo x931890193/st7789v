@@ -22,7 +22,7 @@ where
     fn fill_rect(
         &mut self,
         item: &dyn Dimensions,
-        colors: &mut dyn Iterator<Item = u16>,
+        colors: &mut dyn Iterator<Item=u16>,
     ) -> Result<(), Error<PinError, SpiError>> {
         let sx = item.top_left().x as u16;
         let sy = item.top_left().y as u16;
@@ -57,7 +57,7 @@ where
 
     fn size(&self) -> Size {
         // Vertical direction
-        Size::new(240, 320)
+        Size::new(self.width as u32, self.height as u32)
     }
 
     fn draw_rectangle(
@@ -84,18 +84,26 @@ where
     }
 
     fn draw_image<'a, 'b, I>(&mut self, item: &'a Image<'b, I, Rgb565>) -> Result<(), Self::Error>
-    where
-        &'b I: IntoPixelIter<Rgb565>,
-        I: ImageDimensions,
+        where
+            &'b I: IntoPixelIter<Rgb565>,
+            I: ImageDimensions,
     {
         // TODO: this is inconsistent in embedded-graphics between Rectangle and Image
         // See: https://github.com/jamwaffles/embedded-graphics/issues/182
         let sx = item.top_left().x as u16;
         let sy = item.top_left().y as u16;
-        let ex = (item.bottom_right().x - 1) as u16;
-        let ey = (item.bottom_right().y - 1) as u16;
-        let mut colors = item.into_iter().map(|p| RawU16::from(p.1).into_inner());
+        let ex = (item.bottom_right().x) as u16;
+        let ey = (item.bottom_right().y) as u16;
 
+        let mut count = 0u32;
+        let max = item.size().width * item.size().height;
+        let mut colors = item
+            .into_iter()
+            .take_while(|_| {
+                count += 1;
+                count <= max
+            })
+            .map(|p| RawU16::from(p.1).into_inner());
         self.pixels(sx, sy, ex, ey, &mut colors)?;
 
         Ok(())

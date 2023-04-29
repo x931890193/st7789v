@@ -15,10 +15,14 @@ embedded-hal = "0.2.3"
 # for example
 spidev = "0.5.1"
 sysfs_gpio = "0.6.1"
+tinybmp = "0.4.0"
+
+[dependencies.display-interface]
+version = "0.4"
 
 [dependencies.embedded-graphics]
 optional = true
-version = "0.6.0-beta.2"
+version = "0.6.2"
 
 [features]
 default = ["graphics"]
