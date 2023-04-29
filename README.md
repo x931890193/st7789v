@@ -24,6 +24,10 @@ This driver is a fork of [Gussy/st7789v] that has been modified to work on linux
 
 ## Run example
 > cargo run --example versionfive2
+> 
+### TODO
+
+> Rotate image.....
 
 ## License
 
