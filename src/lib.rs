@@ -50,7 +50,7 @@ pub enum ColorFormat {
     RGB262K_CI16MTrunc = 0b0110_0111,
 }
 
-// rotate
+/// Rotate Rotate0 Rotate90 Rotate180 Rotate270
 pub enum Rotate {
     Rotate0 = 0,
     Rotate90 = 90,
