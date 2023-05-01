@@ -1,20 +1,20 @@
 use std::io::Write;
 use std::{thread, time};
 use embedded_graphics::drawable::Drawable;
-use embedded_graphics::DrawTarget;
+use embedded_graphics::{DrawTarget, text_style};
+use embedded_graphics::fonts::{Font8x16, Text};
 use embedded_graphics::geometry::Point;
 use embedded_graphics::image::{Image, ImageRaw, ImageRawBE, ImageRawLE};
 use embedded_graphics::pixelcolor::{BinaryColor, Rgb565, Rgb888, RgbColor};
 use embedded_graphics::prelude::{Pixel, Primitive, Size};
 use embedded_graphics::primitives::{Line, Circle};
-use embedded_graphics::style::PrimitiveStyle;
+use embedded_graphics::style::{PrimitiveStyle, TextStyle};
 use st7789v::{ST7789V};
 use embedded_hal::digital::v2::OutputPin;
 use embedded_hal::prelude::_embedded_hal_blocking_spi_Transfer;
 use spidev::{Spidev, SpidevOptions, SpiModeFlags};
 use sysfs_gpio::{Direction, Pin};
 use st7789v::Rotate::{Rotate0, Rotate180, Rotate270, Rotate90};
-use tinybmp::Bmp;
 
 
 // versionFive Gpio
@@ -160,6 +160,11 @@ fn main() {
 
     let circle = Circle::new(Point::new(120, 160), 30).into_styled(PrimitiveStyle::with_stroke(Rgb565::GREEN, 10));
     display.draw_circle(&circle).expect("[draw_circle] error");
+
+    let style = TextStyle::new(Font8x16, Rgb565::BLUE);
+
+    let text = Text::new("hello world", Point::new(10, 100)).into_styled(style);
+    display.draw_iter(text.into_iter());
     // release
     display.release().expect("[release display] error");
     // backlight
