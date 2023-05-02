@@ -170,21 +170,21 @@ impl MemAccCtrlConfig {
 
     // rotate 180
     // ############################
-    // 。(320, 240)                 Module
+    // 。                 (320, 240) Module
     // 。                           D
     // 。                           C
     // 。                           L
-    // 。                   (0, 0)  2.0
+    // 。(0, 0)                     2.0
     // ############################
 
 
     // rotate 270
     // ############################
-    // 。                 (320, 240) Module
+    // 。(320, 240)                 Module
     // 。                           D
     // 。                           C
     // 。                           L
-    // 。 (0, 0)                    2.0
+    // 。                        (0, 0) 2.0
     // ############################
 
 
@@ -238,7 +238,7 @@ impl MemAccCtrlConfig {
             color_order: ColorOrder::Rgb,
             latch_order: LatchOrder::LeftToRight, // MIRROR_HORIZONTAL 水平镜像
             line_order: LineAddressOrder::TopToBottom,
-            page_order: PageAddressOrder::BottomToTop, // Y
+            page_order: PageAddressOrder::TopToBottom, // Y
             page_column_order: PageColumnOrder::NormalMode, // MIRROR_VERTICAL 垂直镜像
             column_order: ColumnAddressOrder::LeftToRight, // x
         }
