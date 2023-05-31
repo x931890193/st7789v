@@ -6,8 +6,8 @@ use embedded_graphics::fonts::{Font8x16, Text};
 use embedded_graphics::geometry::Point;
 use embedded_graphics::image::{Image, ImageRaw, ImageRawBE, ImageRawLE};
 use embedded_graphics::pixelcolor::{BinaryColor, Rgb565, Rgb888, RgbColor};
-use embedded_graphics::prelude::{Pixel, Primitive, Size};
-use embedded_graphics::primitives::{Line, Circle};
+use embedded_graphics::prelude::{Dimensions, Pixel, Primitive, Size};
+use embedded_graphics::primitives::{Line, Circle, Rectangle};
 use embedded_graphics::style::{PrimitiveStyle, TextStyle};
 use st7789v::{ST7789V};
 use embedded_hal::digital::v2::OutputPin;
@@ -131,11 +131,11 @@ fn main() {
     let mut display = ST7789V::with_cs(device, gpio.pin_cs, gpio.pin_dc, gpio.pin_rst, width, height).expect("Init display error!");
     let mut delay = Delay;
     display.init(&mut delay).expect("Init delay error!");
-    display.set_rotate(Rotate270).expect("[set_rotate] error");
+    display.set_rotate(Rotate90).expect("[set_rotate] error");
 
     display.address_window(0, 0, display.size().width as u16, display.size().height as u16).expect("address_window error");
     // draw image on WHITE background
-    display.clear(Rgb565::WHITE).expect("clear: panic message");
+    display.clear(Rgb565::BLUE).expect("clear: panic message");
 
 
     // Include the BMP file data.
@@ -151,20 +151,23 @@ fn main() {
     // let image= &Image::new(&image, Point::new(0, 0));
 
     let image = ImageRawLE::new(include_bytes!("./assets/ferris.raw"), 86, 64);
-    let image= &Image::new(&image, Point::new(50, 50));
+    let image = Image::new(&image, Point::new(0, 0));
 
     display.draw_image(&image).expect("[draw_image] error");
 
     let line =  Line::new(Point::new(0, 0), Point::new(width as i32, height as i32 )).into_styled(PrimitiveStyle::with_stroke(Rgb565::GREEN, 10));
     display.draw_line(&line).expect("[draw_line] error");
 
-    let circle = Circle::new(Point::new(120, 160), 30).into_styled(PrimitiveStyle::with_stroke(Rgb565::GREEN, 10));
+    let circle = Circle::new(Point::new(50, 50), 30).into_styled(PrimitiveStyle::with_stroke(Rgb565::GREEN, 10));
     display.draw_circle(&circle).expect("[draw_circle] error");
 
     let style = TextStyle::new(Font8x16, Rgb565::BLUE);
 
     let text = Text::new("hello world", Point::new(10, 100)).into_styled(style);
     display.draw_iter(text.into_iter());
+
+    let rect = Rectangle::new(Point::new(0, 0), Point::new(50, 100));
+    display.draw_rectangle(&rect.into_styled(PrimitiveStyle::with_fill(Rgb565::RED)));
     // release
     display.release().expect("[release display] error");
     // backlight
